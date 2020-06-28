@@ -1,8 +1,8 @@
 # Unity Cardboard SDK Utils
 
-Cardboard emulator, clone and open the demo scene.  
-Removes the need to toggle defines between builds. 
-
+Cardboard emulator, allows to play cardboard based project in Editor without the need to publishing  
+No need to toggle defines between builds.  
+Check out the demo scene. 
 
 | CardboardPlayer |
 |------------|
