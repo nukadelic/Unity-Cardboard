@@ -1,4 +1,4 @@
-# Unity Cardboard SDK Utils
+# Unity Cardboard XR Utilies and in editor emulator
 
 Cardboard emulator, allows to play cardboard based project in Editor without the need to publishing  
 No need to toggle defines between builds.  
