@@ -5,17 +5,10 @@ namespace CardboardXRUtils
 {
     public class GazeTarget : MonoBehaviour
     {
-        public UnityEvent<GazeTarget> onGazeExit;
-        public UnityEvent<GazeTarget, RaycastHit> onGazeStay;
-        public UnityEvent<GazeTarget, RaycastHit> onGazeEnter;
-        public UnityEvent<GazeTarget> onGazeClick;
-
-        internal bool hasGaze = false;
-        public bool HasGaze => hasGaze;
-        internal virtual void OnGazeEnter( RaycastHit hit ) {}
-        internal virtual void OnGazeStay( RaycastHit hit ) {}
-        internal virtual void OnGazeExit( ) { }
-        internal virtual void OnGazeClick( ) { }
+        public bool GazeActive { internal set; get; } = false;
+        public bool GazeJustEntered { internal set; get; } = false;
+        public RaycastHit GazeHitPoint { internal set; get; }
+        public bool GazeClick => CXR.IsTriggerPressed;
     }
 }
 

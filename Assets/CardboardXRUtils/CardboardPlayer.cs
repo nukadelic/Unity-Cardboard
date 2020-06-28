@@ -2,6 +2,7 @@
 using UnityEngine.SpatialTracking;
 using Google.XR.Cardboard;
 using System;
+using UnityEngine.Events;
 
 /// <summary> Card Board XR Api Wrapper to support during Editor play mode </summary>
 public static class CXR
@@ -13,6 +14,11 @@ namespace CardboardXRUtils
 { 
     public class CardboardPlayer : MonoBehaviour
     {
+        public event UnityAction<GazeTarget> onGazeExit;
+        public event UnityAction<GazeTarget, RaycastHit> onGazeStay;
+        public event UnityAction<GazeTarget, RaycastHit> onGazeEnter;
+        public event UnityAction<GazeTarget> onGazeClick;
+
         public TrackedPoseDriver poseDriver;
 
         [Header("Player")]
@@ -50,7 +56,7 @@ namespace CardboardXRUtils
 
                 if ( Api.HasNewDeviceParams( ) ) Api.ReloadDeviceParams();
 
-                CXR.IsTriggerPressed = Google.XR.Cardboard.Api.IsTriggerPressed;
+                CXR.IsTriggerPressed = Api.IsTriggerPressed;
             }
             else UpdateEditor();
 
@@ -58,8 +64,7 @@ namespace CardboardXRUtils
 
             if( CXR.IsTriggerPressed && currentGazeTarget != null ) 
             {
-                currentGazeTarget.OnGazeClick( );
-                currentGazeTarget.onGazeClick?.Invoke( currentGazeTarget );
+                onGazeClick?.Invoke( currentGazeTarget );
             }
         }
 
@@ -150,26 +155,35 @@ namespace CardboardXRUtils
         {
             if( currentGazeTarget == null ) return;
 
-            currentGazeTarget.OnGazeExit();
-            currentGazeTarget.onGazeExit?.Invoke( currentGazeTarget );
-            currentGazeTarget.hasGaze = false;
+            currentGazeTarget.GazeActive = false;
+            currentGazeTarget.GazeHitPoint = default;
+            currentGazeTarget.GazeJustEntered = false;
+
+            onGazeExit?.Invoke( currentGazeTarget );
+            
             currentGazeTarget = null;
         }
         void CaptureGaze( GazeTarget target, RaycastHit hit )
         {
             if( currentGazeTarget == target ) 
             {
-                target.OnGazeStay( hit );
-                target.onGazeStay?.Invoke( target, hit );
+                target.GazeJustEntered = false;
+                target.GazeHitPoint = hit;
+
+                onGazeStay?.Invoke( target, hit );
+                
                 return;
             }
 
             if( currentGazeTarget != null ) BreakGaze();
 
+            target.GazeJustEntered = true;
+            target.GazeActive = true;
+            target.GazeHitPoint = hit;
+
             currentGazeTarget = target;
-            currentGazeTarget.hasGaze = true;
-            currentGazeTarget.OnGazeEnter( hit );
-            currentGazeTarget.onGazeEnter?.Invoke( target, hit );
+
+            onGazeEnter?.Invoke( target, hit );
         }
     }
 }
