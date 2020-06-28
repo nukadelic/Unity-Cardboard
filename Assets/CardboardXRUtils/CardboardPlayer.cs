@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SpatialTracking;
 using Google.XR.Cardboard;
-using System;
 using UnityEngine.Events;
 
 /// <summary> Card Board XR Api Wrapper to support during Editor play mode </summary>
@@ -12,12 +11,13 @@ public static class CXR
 
 namespace CardboardXRUtils
 { 
+
     public class CardboardPlayer : MonoBehaviour
     {
-        public event UnityAction<GazeTarget> onGazeExit;
-        public event UnityAction<GazeTarget, RaycastHit> onGazeStay;
-        public event UnityAction<GazeTarget, RaycastHit> onGazeEnter;
-        public event UnityAction<GazeTarget> onGazeClick;
+        public static event UnityAction<GazeTarget> OnGazeExit;
+        public static event UnityAction<GazeTarget, RaycastHit> OnGazeStay;
+        public static event UnityAction<GazeTarget, RaycastHit> OnGazeEnter;
+        public static event UnityAction<GazeTarget> OnGazeClick;
 
         public TrackedPoseDriver poseDriver;
 
@@ -64,7 +64,7 @@ namespace CardboardXRUtils
 
             if( CXR.IsTriggerPressed && currentGazeTarget != null ) 
             {
-                onGazeClick?.Invoke( currentGazeTarget );
+                OnGazeClick?.Invoke( currentGazeTarget );
             }
         }
 
@@ -159,7 +159,7 @@ namespace CardboardXRUtils
             currentGazeTarget.GazeHitPoint = default;
             currentGazeTarget.GazeJustEntered = false;
 
-            onGazeExit?.Invoke( currentGazeTarget );
+            OnGazeExit?.Invoke( currentGazeTarget );
             
             currentGazeTarget = null;
         }
@@ -170,7 +170,7 @@ namespace CardboardXRUtils
                 target.GazeJustEntered = false;
                 target.GazeHitPoint = hit;
 
-                onGazeStay?.Invoke( target, hit );
+                OnGazeStay?.Invoke( target, hit );
                 
                 return;
             }
@@ -183,7 +183,7 @@ namespace CardboardXRUtils
 
             currentGazeTarget = target;
 
-            onGazeEnter?.Invoke( target, hit );
+            OnGazeEnter?.Invoke( target, hit );
         }
     }
 }
